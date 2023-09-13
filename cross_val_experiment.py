@@ -63,9 +63,7 @@ def labels_from_csv_preproc(csv_path: str) -> LabelDfDic:
     return LabelDfDic(labels, label2index, index2label)
 
 
-def feature_index_from_csv(
-    *, path: str, keep_first: int = 0, is_r_list: bool = True
-) -> dict[str, list]:
+def feature_index_from_csv(*, path: str, keep_first: int = 0) -> dict[str, list]:
     """Read feature index
     if keep_first == 0 then keep all features
     fs_dic["full"] is a special case using all available features
@@ -78,7 +76,7 @@ def feature_index_from_csv(
         gene_index.dropna(inplace=True)
         gene_index[name] = gene_index[name].astype("Int64")
         gene_index_lst = gene_index[name].tolist()
-        if is_r_list:
+        if prm.R_COMPATIBILITY:
             gene_index_lst = [el - 1 for el in gene_index_lst]
         fs_dic[name] = gene_index_lst
         if keep_first > 0:
@@ -151,7 +149,7 @@ def workflow(data_paths: list[DataPaths], repeats=prm.REPEATS):
         dfr = dataframe_from_csv_preproc(csv_path=dpath.data, transpose=True)
         labels = labels_from_csv_preproc(dpath.labels)
         feature_indices = feature_index_from_csv(
-            path=dpath.posidx, keep_first=prm.KEEP_FIRST_FEATURES, is_r_list=True
+            path=dpath.posidx, keep_first=prm.KEEP_FIRST_FEATURES
         )
 
         results = {}
