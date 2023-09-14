@@ -144,7 +144,7 @@ def filter_features(dfr: pd.DataFrame, flist: list):
     return dfr.loc[:, flist]
 
 
-def workflow(data_paths: list[DataPaths], repeats=prm.REPEATS):
+def workflow(data_paths: list, repeats=prm.REPEATS):
     """Main workflow"""
 
     for dpath in data_paths:
