@@ -8,8 +8,8 @@ from sklearn.tree import DecisionTreeClassifier
 
 CLASSIFIERS = {
     "knn": {"function": KNeighborsClassifier, "parameters": {"n_neighbors": 10}},
-    "lrc": {"function": LogisticRegression, "parameters": {"multi_class": "auto"}},
-    "svm": {"function": SVC, "parameters": {"kernel": "linear"}},
     "mnb": {"function": MultinomialNB, "parameters": {}},
     "dtc": {"function": DecisionTreeClassifier, "parameters": {"random_state": 0}},
+    "lrc": {"function": LogisticRegression, "parameters": {"multi_class": "auto"}},
+    "svm": {"function": SVC, "parameters": {"kernel": "linear"}},
 }

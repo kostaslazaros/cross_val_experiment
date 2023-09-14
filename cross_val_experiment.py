@@ -3,7 +3,9 @@ import pickle
 import os
 import warnings
 from collections import namedtuple
-from sklearn.model_selection import KFold
+
+# from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score, f1_score
 import pandas as pd
 import numpy as np
@@ -20,14 +22,14 @@ CrossRes = namedtuple(
 warnings.filterwarnings("ignore")
 
 
-def get_datasets_paths(data_path: str) -> list[NamePath]:
+def get_datasets_paths(data_path: str):
     """Get dataset paths"""
     dataset_paths = os.listdir(data_path)
     dataset_paths.sort()
     return [NamePath(i, os.path.join(data_path, i)) for i in dataset_paths]
 
 
-def get_files_from_path(namepath: NamePath) -> DataPaths:
+def get_files_from_path(namepath: NamePath):
     """Get files from path"""
     data = os.path.join(namepath.path, f"{namepath.name}.csv")
     labels = os.path.join(namepath.path, f"{namepath.name}_Labels.csv")
@@ -35,14 +37,14 @@ def get_files_from_path(namepath: NamePath) -> DataPaths:
     return DataPaths(namepath.name, data, labels, posidx)
 
 
-def create_save_path(data_path: str, dataset_name: str, no_of_repeats: int) -> NamePath:
+def create_save_path(data_path: str, dataset_name: str, no_of_repeats: int):
     """Save file as: <dataset_name>_<classifier_name>_<no_of_repeats>.pickle"""
     save_name = f"{dataset_name}_{no_of_repeats}.pickle"
     path = os.path.join(data_path, save_name)
     return NamePath(save_name, path)
 
 
-def dataframe_from_csv_preproc(*, csv_path: str, transpose: bool) -> pd.DataFrame:
+def dataframe_from_csv_preproc(*, csv_path: str, transpose: bool):
     """Read dataframe from csv file and preprocess it"""
     dfr = pd.read_csv(csv_path)
     if transpose:
@@ -51,7 +53,7 @@ def dataframe_from_csv_preproc(*, csv_path: str, transpose: bool) -> pd.DataFram
     return dfr
 
 
-def labels_from_csv_preproc(csv_path: str) -> LabelDfDic:
+def labels_from_csv_preproc(csv_path: str):
     """Read labels from csv file and preprocess them"""
     labels = pd.read_csv(csv_path)
     labels_unique_lst = list(labels["x"].unique())
@@ -63,7 +65,7 @@ def labels_from_csv_preproc(csv_path: str) -> LabelDfDic:
     return LabelDfDic(labels, label2index, index2label)
 
 
-def feature_index_from_csv(*, path: str, keep_first: int = 0) -> dict[str, list]:
+def feature_index_from_csv(*, path: str, keep_first: int = 0):
     """Read feature index
     if keep_first == 0 then keep all features
     fs_dic["full"] is a special case using all available features
@@ -84,7 +86,7 @@ def feature_index_from_csv(*, path: str, keep_first: int = 0) -> dict[str, list]
     return fs_dic
 
 
-def classifier_crossval(*, data, labels: LabelDfDic, alg_name="knn") -> CrossRes:
+def classifier_crossval(*, data, labels: LabelDfDic, alg_name="knn"):
     """Perform cross validation experiment"""
     class_labels = labels.labels
 
@@ -99,10 +101,11 @@ def classifier_crossval(*, data, labels: LabelDfDic, alg_name="knn") -> CrossRes
     predictions = np.zeros(len(class_labels))
 
     # Create k-fold cross-validation object
-    kfold = KFold(n_splits=prm.FOLDS, shuffle=True)
+    # kfold = KFold(n_splits=prm.FOLDS, shuffle=True)
+    skfold = StratifiedKFold(n_splits=prm.FOLDS, shuffle=True)
 
     # Loop through each fold
-    for train_index, test_index in kfold.split(data):
+    for train_index, test_index in skfold.split(data, class_labels):
         # Split data into training and test sets
         d_tr, d_ts = data[train_index], data[test_index]
         c_tr = class_labels[train_index]
@@ -134,7 +137,7 @@ def save2pickle(data: dict, pickle_path: str):
         pickle.dump(data, fil, pickle.HIGHEST_PROTOCOL)
 
 
-def filter_features(dfr: pd.DataFrame, flist: list) -> pd.DataFrame:
+def filter_features(dfr: pd.DataFrame, flist: list):
     """Filter dataset columns according to feature selection method"""
     if flist == []:
         return dfr
@@ -154,17 +157,17 @@ def workflow(data_paths: list[DataPaths], repeats=prm.REPEATS):
 
         results = {}
         for algorithm in CLASSIFIERS:
-            msg(f"{dpath.name} : {algorithm}")
+            msg(f"{dpath.name} {algorithm}")
             results[algorithm] = {}
             for findex, vals in feature_indices.items():
                 results[algorithm][findex] = []
                 filtered_df = filter_features(dfr, vals)
                 msg(
-                    f"{dpath.name} : {algorithm} -> {findex} (features: {filtered_df.shape[1]})"
+                    f"{dpath.name} {algorithm} {findex} (features: {filtered_df.shape[1]})"
                 )
 
                 for i in range(repeats):
-                    msg(f"{dpath.name} : {algorithm} -> {findex} -> repeat {i}")
+                    msg(f"{dpath.name} {algorithm} {findex} r{i + 1}")
                     res1 = classifier_crossval(
                         data=filtered_df, labels=labels, alg_name=algorithm
                     )

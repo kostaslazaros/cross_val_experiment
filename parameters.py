@@ -1,6 +1,6 @@
 """Set your parameters here before running the experiment"""
 DATA_PATH = "./data"
-SAVE_PATH = "./pickle"
+SAVE_PATH = "./pickle2"
 KEEP_FIRST_FEATURES = 100
 REPEATS = 3
 FOLDS = 10

@@ -1,6 +1,7 @@
 """Varius utilities for the project"""
 import requests
 import parameters as prm
+import classifiers as clf
 
 
 def notify(msg: str, okv=True):
@@ -27,13 +28,16 @@ def msg(message: str, okv=True, toall=False):
 def show_parameters():
     """Parameters as text for logging"""
     txt = (
-        f"DATA_PATH = {prm.DATA_PATH} \n"
-        f"SAVE_PATH = {prm.SAVE_PATH} \n"
+        f"DATA_PATH           = {prm.DATA_PATH} \n"
+        f"SAVE_PATH           = {prm.SAVE_PATH} \n"
         f"KEEP_FIRST_FEATURES = {prm.KEEP_FIRST_FEATURES} \n"
-        f"REPEATS = {prm.REPEATS} \n"
-        f"FOLDS = {prm.FOLDS} \n"
-        f"ROUND_DECIMALS = {prm.ROUND_DECIMALS} \n"
-        f"F1_AVERAGE = {prm.F1_AVERAGE} \n"
-        f"NOTIFY_CHANNEL = {prm.NOTIFY_CHANNEL} \n"
+        f"REPEATS             = {prm.REPEATS} \n"
+        f"FOLDS               = {prm.FOLDS} \n"
+        f"ROUND_DECIMALS      = {prm.ROUND_DECIMALS} \n"
+        f"F1_AVERAGE          = {prm.F1_AVERAGE} \n"
+        f"NOTIFY_CHANNEL      = {prm.NOTIFY_CHANNEL} \n"
+        f"R_COMPATIBILITY     = {prm.R_COMPATIBILITY} \n"
+        f"CROSS_VALIDATION    = Stratified \n"
+        f"CLASSIFIERS         = {list(clf.CLASSIFIERS.keys())}"
     )
     return txt
