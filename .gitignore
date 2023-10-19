@@ -5,6 +5,7 @@
 # Byte-compiled / optimized / DLL files
 data/
 pickle/
+h5/
 __pycache__/
 *.py[cod]
 *$py.class
