@@ -1,6 +1,6 @@
 """Set your parameters here before running the experiment"""
 DATA_PATH = "./data"
-SAVE_PATH = "./pickle2"
+SAVE_PATH = "./pickle"
 KEEP_FIRST_FEATURES = 100
 REPEATS = 3
 FOLDS = 10
@@ -11,3 +11,5 @@ NOTIFY_CHANNEL = "lamia-box"
 # then 1 has to be subtracted to have python
 # compatibility (zero-based)
 R_COMPATIBILITY = True
+SELECTED_CLASSIFIERS = ["knn", "mnb", "dtc", "lrc", "svm"]
+# SELECTED_CLASSIFIERS = ["mnb"]
